@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>酒店列表</title>
+    <script src="layui/layui.js"></script>
+    <script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
+    <link rel="stylesheet" href="layui/css/layui.css">
+</head>
+<body>
+
+<table class="layui-hide" id="test" lay-filter="test"></table>
+<!--图片模板-->
+<script type="text/html" id="imgTpl">
+<img src="{{d.img.imgAdd}}" style="height: 100px"/>
+
+</script>
+<!--推荐指数模板-->
+<script type="text/html" id="star">
+
+           {{# if(d.hotelStar == "width:100%"){}}
+            ☆☆☆☆☆
+           {{# }else if(d.hotelStar == "width:80%"){}}
+            ☆☆☆☆
+           {{#  }else if(d.hotelStar == "width:60%"){}}
+            ☆☆☆
+           {{# }else if(d.hotelStar == "width:40%"){}}
+            ☆☆
+           {{#  }else if(d.hotelStar == "width:20%"){}}
+            ☆
+           {{#  }else{}}
+            不推荐
+           {{#  }}}
+</script>
+<!--操作模板-->
+<script type="text/html" id="operBar">
+<a class="layui-btn layui-btn-danger  layui-btn-xs" id="{{d.hotelId}}" onclick="deleteHotel(this.id)" >删除</a>
+<a class="layui-btn layui-btn-primary  layui-btn-xs"  onclick="packageInfo('{{d.hotelId}}')">查看套餐</a>
+
+</script>
+<!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 -->
+<script>
+
+// <!--    查看套餐--
+    function packageInfo(hotelId) {
+        layer.open({
+            title:"新增",
+            area: ['1024px', '768px'],
+            type: 2,
+            content: 'PackageList.html?hotelId='+hotelId,
+            success: function(layero, index){
+                var body = layer.getChildFrame('body', index);
+                var iframeWin = window[layero.find('iframe')[0]['name']]; //得到iframe页的窗口对象，执行iframe页的方法：iframeWin.method();
+            }
+        });
+
+
+    }
+
+
+    layui.use('table', function(){
+        var table = layui.table;
+
+
+        table.render({
+            elem: '#test'
+            , url: 'hotelList'
+            , cols: [[
+                {type: 'checkbox'}
+                , {field: 'hotelId', width: 10, title: 'ID', sort: true}
+                , {field: 'hotelName', width: 150,edit:"hotelName", title: '酒店名称', sort: true}
+                , {field: 'hotelAddress', width: 200, title: '地址',edit:"hotelAddress"}
+                , {field: 'hotelTel', width: 300, title: '电话',edit:"hotelTel"}
+                , {field: 'hotelStar', title: '酒店推荐指数', templet:"#star",edit:"hotelStar",width: 100}
+                , {field: 'img', title: '图片', templet:"#imgTpl"}
+                , {field: 'btn', title: '操作', templet:"#operBar"}
+
+            ]]
+            , page: true
+        });
+
+
+
+        table.on('edit(test)', function(obj){
+            var value = obj.value //得到修改后的值
+                ,data = obj.data //得到所在行所有键值
+                ,field = obj.field; //得到字段
+
+            $.ajax({
+                url:"updateHotel",
+                type:"post",
+                data:{
+                    "hotelId":data.hotelId,
+                    "hotelName":data.hotelName,
+                    "hotelAddress":data.hotelAddress,
+                    "hotelTel":data.hotelTel,
+                    "hotelStar":data.hotelStar
+                },
+                success:function (data) {
+                    // console.log(data)
+                    if (data.flag){
+                        layer.msg('[ID: '+ data.hotelId +'] ' + field + ' 字段更改为：'+ value);
+                    }else {
+                        layer.msg("修改失败")
+                    }
+                }
+
+            })
+        });
+
+    });
+</script>
+
+<script>
+    var layer;
+    layui.use("layer",function () {
+        layer = layui.layer;
+    });
+
+    function deleteHotel(id) {
+        layer.confirm('纳尼！你真的要删除', {
+            btn: ['真的', '假的'] //可以无限个按钮
+            ,btn2: function(index){
+                layer.msg("吓死爸爸了")
+            }},function(index){
+                $.ajax({
+                    url: "deleteHotel",
+                    type: "post",
+                    data:{
+                        "hotelId":id,
+                    },
+                    success:function (data) {
+                        if (data.flag){
+                            layer.msg("删除了！呜呜呜呜");
+                            location.replace("/hotelList.html")
+                        }else {
+                            layer.msg("还好删除失败了！哈哈哈哈");
+                        }
+                    }
+                })
+            });
+    }
+</script>
+</body>
+
+
+</html>

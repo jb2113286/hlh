@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="layui/layui.js"></script>
+    <script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
+    <link rel="stylesheet" href="layui/css/layui.css">
+</head>
+<body>
+
+<!--工具栏模板-->
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+
+
+<table class="layui-hide" id="test" lay-filter="test"></table>
+<!--增加套餐-->
+<div style="width: 300px" >
+    <form class="layui-form">
+        <div class="layui-form-item">
+            <label class="layui-form-label">套餐名称</label>
+            <div class="layui-input-block">
+                <input id="packageName" value="" type="text" name="title" lay-verify="title" autocomplete="off" placeholder="套餐名称" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">套餐价格</label>
+            <div class="layui-input-block">
+                <input id="packagePrice" value="" type="text" name="title" lay-verify="title" autocomplete="off" placeholder="套餐价格" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">套餐内容</label>
+            <div class="layui-input-block">
+                <input id="packageContent" value="" type="text" name="title" lay-verify="title" autocomplete="off" placeholder="套餐内容" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">套餐销量</label>
+            <div class="layui-input-block">
+                <input id="packageSales" value="" type="text" name="title" lay-verify="title" autocomplete="off" placeholder="套餐销量" class="layui-input">
+            </div>
+        </div>
+
+        <input onclick="addPackage()" class="layui-btn" type="button"  style="width: 200px; margin-left: 100px;" value="添加">
+
+    </form>
+</div>
+
+<fieldset class="layui-elem-field layui-field-title" >
+    <legend>上传图片</legend>
+</fieldset>
+<div class="layui-upload-drag" id="uploadImg" style="float: left">
+
+    <i class="layui-icon"></i>
+    <p>点击上传，或将文件拖拽到此处</p>
+    <div class="layui-hide" id="uploadDemoView">
+        <hr>
+        <img src="" alt="上传成功后渲染" style="max-width: 196px">
+    </div>
+</div>
+<!--图片模板-->
+<script type="text/html" id="imgTpl">
+    <img src="{{d.img.imgAdd}}" style="height: 100px"/>
+
+</script>
+<script type="text/html" id="imgTpl2">
+    <img src="{{d.packageMenuA}}" style="height: 100px"/>
+
+</script>
+<script type="text/html" id="imgTpl3">
+    <img src="{{d.packageMenuB}}" style="height: 100px"/>
+</script>
+<!--按钮模板-->
+<script>
+    layui.use('table', function() {
+        var table = layui.table;
+        table.render({
+            elem: '#test'
+            , url: 'packageInfo'
+            , cols: [[
+                {type: 'checkbox'}
+                , {field: 'packageId', width: 50, title: 'ID', sort: true}
+                , {field: 'packageName', width: 150, edit: "hotelName", title: '套餐名'}
+                , {field: 'packagePrice', width: 150, edit: "packagePrice", title: '套餐价格', sort: true}
+                , {field: 'packageContent', width: 150, edit: "packageContent", title: '套餐内容'}
+                , {field: 'packageSales', width: 150, edit: "packageSales", title: '销售量', sort: true}
+                , {field: 'packageMenuA', width: 150,  title: '图片A',templet: '<div><img src="{{d.packageMenuA}}"></div>'}
+                , {field: 'packageMenuB', width: 150,  title: '图片B',templet: '<div><img src="{{d.packageMenuB}}"></div>'}
+                , {field: 'hotelHotelId', width: 150,  title: '酒店ID'}
+                , {field: 'img', title: '酒店图片',width: 150, templet: "#imgTpl"}
+                , {field: 'bbttoo', title: '工具栏',width: 150,  toolbar: '#barDemo'}
+            ]]
+            , page: true
+        });
+
+        //监听行工具事件
+        table.on('tool(test)', function(obj){
+            var data = obj.data;
+            //console.log(obj)
+            if(obj.event === 'del'){
+                layer.confirm('真的删除行么', function(index){
+                    obj.del();
+                    layer.close(index);
+                    $.ajax({
+                        url:"deletePackage",
+                        type:"post",
+                        data:{
+                            "packageId":data.packageId
+                        },
+                        success:function (res) {
+                            if (res.flag==true){
+                                layer.msg("删除成功")
+                            }else {
+                                layer.msg("删除失败")
+                            }
+                        }
+                    })
+                });
+            } else if(obj.event === 'edit'){
+                layer.prompt({
+                    formType: 2
+                    ,value: data.email
+                }, function(value, index){
+                    obj.update({
+                        email: value
+                    });
+                    layer.close(index);
+                });
+            }
+        })
+
+
+
+        table.on('edit(test)', function(obj){
+            var value = obj.value //得到修改后的值
+                ,data = obj.data //得到所在行所有键值
+                ,field = obj.field; //得到字段
+            $.ajax({
+                url:"updatePackage",
+                type:"post",
+                data:{
+                    "packageId":data.packageId,
+                    "packageName":data.packageName,
+                    "packagePrice":data.packagePrice,
+                    "packageContent":data.packageContent,
+                    "packageSales":data.packageSales,
+                },
+                success:function (data) {
+                    // console.log(data)
+                    if (data.flag){
+                        layer.msg('[ID: '+ data.hotelId +'] ' + field + ' 字段更改为：'+ value);
+                    }else {
+                        layer.msg("修改失败")
+                    }
+                }
+
+            })
+        });
+    })
+
+
+    var imgId;
+    layui.use('upload', function(){
+        var upload = layui.upload;
+        //拖拽上传
+        upload.render({
+            elem: '#uploadImg'
+            ,url: '/upload' //改成您自己的上传接口
+            ,done: function(res){
+                if (res.Code==1){
+                    layer.msg('上传成功');
+                    layui.$('#uploadDemoView').removeClass('layui-hide').find('img').attr('src', res.img.imgAdd);
+                    console.log(res)
+                    imgId = res.img.imgId
+                }else {
+                    layer.msg('上传失败');
+                }
+
+            }
+        });
+    });
+    //添加套餐
+    function addPackage(){
+        var packageName = $("#packageName").val();
+        var packagePrice = $("#packagePrice").val();
+        var packageContent = $("#packageContent").val();
+        var packageSales = $("#packageSales").val();
+        if (packageName.length ==0 || packagePrice.length ==0 || packageContent.length ==0 || packageSales.length ==0){
+            layer.msg("都不能为空")
+        }else {
+            $.ajax({
+                url:"addPackage",
+                type:"post",
+                data:{
+                    "packageName":packageName,
+                    "packagePrice":packagePrice,
+                    "packageContent":packageContent,
+                    "packageSales":packageSales,
+                    "imgId":imgId
+                },
+                success:function (data) {
+                    console.log(data)
+                    if (data.flag){
+                        layer.msg(data.msg)
+                        packageName.value = "";
+                        packagePrice.value = "";
+                        packageContent.value = "";
+                        packageSales.value = "";
+                        //重新渲染表格
+                        window.location.reload();
+
+
+                    }else {
+                        layer.msg("添加失败");
+                    }
+                },
+                dataType:"json"
+            })
+        }
+    }
+
+</script>
+</body>
+
+</html>

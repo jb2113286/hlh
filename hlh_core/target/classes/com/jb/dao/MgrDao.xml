@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jb.dao.MgrDao">
+    <resultMap id="TbMgrMap" type="com.jb.bean.TbMgr">
+        <id property="magId" column="mag_idd"></id>
+        <result property="magName" column="mag_name"></result>
+        <result property="magPwd" column="mag_pwd"></result>
+    </resultMap>
+
+    <select id="selectMgr" resultMap="TbMgrMap">
+        select * from tb_mgr where mag_name=#{name} and mag_pwd = #{pwd}
+    </select>
+</mapper>

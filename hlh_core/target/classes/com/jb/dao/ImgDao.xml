@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jb.dao.ImgDao">
+
+    <resultMap id="ImgMP" type="com.jb.bean.Img">
+        <id property="imgId" column="img_id"></id>
+        <result property="imgAdd" column="img_add"></result>
+    </resultMap>
+    <insert id="insertIntoImg" parameterType="com.jb.bean.Img" useGeneratedKeys="true" keyProperty="imgId">
+        insert into tb_img (img_add) values(#{imgAdd})
+    </insert>
+    <update id="updateHotelId">
+        update tb_img set tb_hotel_hotel_id = #{hotelId} where img_id = #{imgId}
+    </update>
+    <update id="updatePackage">
+        update tb_img set tb_package_package_id = #{packageId} where img_id = #{imgId}
+    </update>
+    <select id="selectImgByHotelId" parameterType="int" resultMap="ImgMP">
+        select * from tb_img where tb_hotel_hotel_id = #{hotelId}
+    </select>
+    <select id="selectImgByRoomId" parameterType="int" resultMap="ImgMP">
+        select * from tb_img where tb_room_room_id = #{roomId}
+    </select>
+    <select id="selectImgByPackageId" parameterType="int" resultMap="ImgMP">
+        select * from tb_img where tb_package_package_id = #{packageId}
+    </select>
+
+</mapper>

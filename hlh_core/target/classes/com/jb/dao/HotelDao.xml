@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jb.dao.HotelDao">
+
+    
+    <resultMap id="HotelMP" type="com.jb.bean.Hotel">
+        <id property="hotelId" column="hotel_id"></id>
+        <result property="hotelName" column="hotel_name"></result>
+        <result property="hotelAddress" column="hotel_address"></result>
+        <result property="hotelTel" column="hotel_tel"></result>
+        <result property="hotelStar" column="hotel_star"></result>
+        <association property="img"
+                     javaType="com.jb.bean.Img"
+                     column="hotel_id"
+                     select="com.jb.dao.ImgDao.selectImgByHotelId"
+                     fetchType="eager"></association>
+    </resultMap>
+    
+    <select id="selectHotelList" resultMap="HotelMP">
+        select * from tb_hotel
+    </select>
+    <select id="selectHotelById" resultMap="HotelMP" parameterType="Integer">
+        select * from tb_hotel where hotel_id = #{hotelId}
+    </select>
+    <select id="listHotels" resultMap="HotelMP">
+        select * from tb_hotel where flag = 1 limit #{start},#{limit}
+    </select>
+    <select id="getHotelCount" resultType="int">
+        select  count(1) from tb_hotel
+    </select>
+    <insert id="insetInto" parameterType="com.jb.bean.Hotel" useGeneratedKeys="true" keyProperty="hotelId">
+        insert into
+        tb_hotel(hotel_name,hotel_address,hotel_tel,hotel_star)
+        values (#{hotelName},#{hotelAddress},#{hotelTel},#{hotelStar})
+    </insert>
+    <update id="deleteHotel" parameterType="int">
+        UPDATE tb_hotel set flag = 0 where hotel_id = #{hotelId}
+    </update>
+    <update id="updateHotel" parameterType="com.jb.bean.Hotel">
+        UPDATE tb_hotel set hotel_name = #{hotelName},hotel_tel = #{hotelTel},hotel_tel=#{hotelAddress},hotel_star=#{hotelStar} where hotel_id = #{hotelId}
+    </update>
+
+
+</mapper>

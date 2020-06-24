@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jb.dao.InformationDao">
+
+
+    <resultMap id="InformationMP" type="com.jb.bean.Information">
+        <id property="infoId" column="info_id"></id>
+        <result property="infoStarLevel" column="info_star_level"></result>
+        <result property="infoDecorateTime" column="info_decorate_time"></result>
+        <result property="infoSubscription" column="info_subscription"></result>
+        <result property="infoServiceFee" column="info_service_fee"></result>
+        <result property="infoEnterFee" column="info_enter_fee"></result>
+        <result property="infoDressingRoom" column="info_dressing_room"></result>
+        <result property="infoBus" column="info_bus"></result>
+        <result property="infoMicrophone" column="info_microphone"></result>
+        <result property="infoProjector" column="info_projector"></result>
+        <result property="infoTablecloth" column="info_tablecloth"></result>
+        <result property="infoElectricCharge" column="info_eletric_charge"></result>
+        <result property="infoAmusement" column="info_amusement"></result>
+        <result property="infoCoordinatesA" column="info_coordinatesA"></result>
+        <result property="infoCoordinatesB" column="info_coordinatesB"></result>
+    </resultMap>
+    <select id="selectInfoById" parameterType="Integer" resultMap="InformationMP">
+        select * from tb_information where tb_hotel_hotel_id = #{hotelId}
+    </select>
+
+
+
+</mapper>

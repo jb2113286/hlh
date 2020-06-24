@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jb.dao.RoomDao">
+
+    <resultMap id="RoomMP" type="com.jb.bean.Room">
+        <id property="roomId" column="room_id"></id>
+        <result property="roomName" column="room_name"></result>
+        <result property="roomHeight" column="room_height"></result>
+        <result property="roomMinFee" column="room_min_fee"></result>
+        <result property="roomForm" column="room_form"></result>
+        <result property="roomPillar" column="room_pillar"></result>
+        <result property="roomDinner" column="room_dinner"></result>
+        <result property="roomElectricFee" column="room_electric_fee"></result>
+        <result property="roomSplit" column="room_split"></result>
+        <result property="roomArea" column="room_area"></result>
+        <result property="roomLamplight" column="room_lamplight"></result>
+        <result property="roomLED" column="room_LED"></result>
+        <result property="roomTables" column="room_tables"></result>
+        <association property="img"
+                     javaType="img"
+                     column="room_id"
+                     select="com.jb.dao.ImgDao.selectImgByRoomId"
+                     fetchType="eager"></association>
+    </resultMap>
+    
+
+    <select id="selectRoomListByHotelId" parameterType="Integer" resultMap="RoomMP">
+        select * from tb_room where tb_hotel_hotel_id = #{hotelId}
+    </select>
+
+</mapper>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jb.dao.CartDao">
+
+
+    <insert id="addCart" parameterType="com.jb.bean.Shoppingcart">
+        insert into
+            tb_shoppingcart
+            (
+                shoppingcart_id,shoppingcart_time,shoppingcart_name,
+                shoppingcart_type,shoppingcart_place,shoppingcart_price,
+                shoppingcart_count,shoppingcart_img,shoppingcart_hotelname,
+                tb_user_user_tel
+                )
+        values
+            (
+                #{shoppingcartId},#{shoppingcartTime},#{shoppingcartName},
+                #{shoppingcartType},#{shoppingcartPlace},#{shoppingcartPrice},
+                #{shoppingcartCount},#{shoppingcartImg},#{shoppingcartHotelname},
+                #{tbUserUserTel}
+            )
+    </insert>
+    <update id="changeNum" parameterType="com.jb.bean.Shoppingcart">
+        update tb_shoppingcart set shoppingcart_count = #{shoppingcartCount} where shoppingcart_id = #{shoppingcartId}
+    </update>
+
+    <resultMap id="cartMap" type="com.jb.bean.Shoppingcart">
+        <id column="shoppingcart_id" property="shoppingcartId"/>
+        <result column="shoppingcart_time" property="shoppingcartTime"/>
+        <result column="shoppingcart_name" property="shoppingcartName"/>
+        <result column="shoppingcart_type" property="shoppingcartType"/>
+        <result column="shoppingcart_place" property="shoppingcartPlace"/>
+        <result column="shoppingcart_price" property="shoppingcartPrice"/>
+        <result column="shoppingcart_count" property="shoppingcartCount"/>
+        <result column="tb_user_user_tel" property="tbUserUserTel"/>
+        <result column="shoppingcart_img" property="shoppingcartImg"/>
+        <result column="shoppingcart_hotelname" property="shoppingcartHotelname"/>
+    </resultMap>
+    <select id="cartListByUserId" resultMap="cartMap" resultSets="java.util.List">
+        select * from tb_shoppingcart where tb_user_user_tel=#{userTel}
+    </select>
+
+
+</mapper>
